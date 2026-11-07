@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jelajah Ruang</title>
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#1B2430; --muted:#58626F; --line:#DDE1E8;
+  --u:#CF3D26; --u-soft:#FFE4DE; --u-ink:#FFFFFF;
+  --a0:#087A7A; --a0s:#D6F2F1; --a1:#CF3D26; --a1s:#FFE4DE; --a2:#17814A; --a2s:#D8F3E2;
+  --a3:#6B3FD0; --a3s:#E9E0FB; --a4:#C2255C; --a4s:#FCE0EA;
+  --info:#E8A800; --info-bg:#FFF0B8; --ask:#1F78D1; --ask-bg:#D9EAFB;
+  --good:#17814A; --good-bg:#DCF3E4; --bad:#C0392B; --bad-bg:#FCE3DD;
+  --k0:#F0643C; --k1:#F5B820; --k2:#34B86B; --k3:#2FA0E0; --k4:#8A63E6; --k5:#E8508C;
+  --display:'Fredoka','Trebuchet MS',system-ui,sans-serif;
+  --body:'Lexend','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14161C; --surface:#1F232C; --ink:#EEF0F4; --muted:#A8B0BD; --line:#333A47;
+  --u:#FF8D74; --u-soft:#4A2A22; --u-ink:#1A0E0B;
+  --a0:#4FD0CF; --a0s:#143B3B; --a1:#FF8D74; --a1s:#4A2A22; --a2:#5ED68F; --a2s:#173D28;
+  --a3:#B79CFF; --a3s:#33275B; --a4:#FF86B1; --a4s:#4D2236;
+  --info:#E8B100; --info-bg:#4F4210; --ask:#5AA9F0; --ask-bg:#17395E;
+  --good:#5CD68C; --good-bg:#163F29; --bad:#FF8A78; --bad-bg:#4A2019;
+  --k0:#FF7A52; --k1:#FFC93A; --k2:#4ACB82; --k3:#4BB5F0; --k4:#A184F0; --k5:#F2679F;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161C; --surface:#1F232C; --ink:#EEF0F4; --muted:#A8B0BD; --line:#333A47;
+  --u:#FF8D74; --u-soft:#4A2A22; --u-ink:#1A0E0B;
+  --a0:#4FD0CF; --a0s:#143B3B; --a1:#FF8D74; --a1s:#4A2A22; --a2:#5ED68F; --a2s:#173D28;
+  --a3:#B79CFF; --a3s:#33275B; --a4:#FF86B1; --a4s:#4D2236;
+  --info:#E8B100; --info-bg:#4F4210; --ask:#5AA9F0; --ask-bg:#17395E;
+  --good:#5CD68C; --good-bg:#163F29; --bad:#FF8A78; --bad-bg:#4A2019;
+  --k0:#FF7A52; --k1:#FFC93A; --k2:#4ACB82; --k3:#4BB5F0; --k4:#A184F0; --k5:#F2679F;
+  color-scheme:dark}
+/* Tiap unit punya warna sendiri: 0 hijau toska, 1 jingga merah, 2 hijau, 3 ungu, 4 merah muda */
+.u0{--u:var(--a0);--u-soft:var(--a0s)} .u1{--u:var(--a1);--u-soft:var(--a1s)} .u2{--u:var(--a2);--u-soft:var(--a2s)}
+.u3{--u:var(--a3);--u-soft:var(--a3s)} .u4{--u:var(--a4);--u-soft:var(--a4s)}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--body);-webkit-text-size-adjust:100%;
+  padding-block:14px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--ask);outline-offset:2px}
+.app{max-width:480px;margin-inline:auto;display:flex;flex-direction:column;gap:14px}
+.hdr{display:flex;align-items:center;gap:10px}
+.logo{width:34px;display:block}
+.brand{font:600 22px/1 var(--display);letter-spacing:.01em}
+#view,.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:32px} h2{font-size:26px}
+p{margin:0}
+.lead{color:var(--muted)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.good{background:var(--good-bg);border-color:var(--good)}
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;min-width:0}
+.blk{display:block;width:100%;max-height:250px}
+.blk .k0{--c:var(--k0)} .blk .k1{--c:var(--k1)} .blk .k2{--c:var(--k2)} .blk .k3{--c:var(--k3)} .blk .k4{--c:var(--k4)} .blk .k5{--c:var(--k5)}
+.blk .top{fill:color-mix(in srgb,var(--c),#fff 32%)} .blk .lft{fill:var(--c)} .blk .rgt{fill:color-mix(in srgb,var(--c),#000 28%)}
+.blk polygon{stroke:color-mix(in srgb,var(--c,#888),#000 45%);stroke-width:.6;stroke-linejoin:round}
+.blk .floor{fill:none;stroke:var(--muted);stroke-dasharray:3 3;stroke-width:1}
+.logo .blk{max-height:none}
+.between{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1 1 140px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--u);border-radius:6px;transition:width .3s}
+.bar.thin{height:6px}
+.btn{min-height:52px;padding:12px 20px;border:0;border-radius:14px;background:var(--u);color:var(--u-ink);font-weight:600;font-size:17px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--u);box-shadow:inset 0 0 0 2px var(--u)}
+.btn.big{width:100%;min-height:58px;font-size:18px}
+.link{background:none;border:0;color:var(--u);font-weight:600;padding:8px 0;min-height:44px}
+.navrow{display:flex;gap:10px}
+.navrow .btn{flex:1}
+input,textarea{width:100%;min-height:52px;border:2px solid var(--line);border-radius:12px;background:var(--surface);padding:10px 12px}
+label{font-weight:500}
+/* menu bawah */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.navin{max-width:480px;margin-inline:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.navin button{min-height:56px;border:0;border-radius:12px;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:500}
+.navin button[aria-current="page"]{background:var(--u-soft);color:var(--u);font-weight:600}
+.navin svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* kartu unit */
+.ucard{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;min-height:72px}
+.un{width:40px;height:40px;border-radius:12px;background:var(--u-soft);color:var(--u);display:grid;place-items:center;font:600 20px var(--display)}
+.ut{display:flex;flex-direction:column;min-width:0}
+.ut small{color:var(--muted);font-size:14px;line-height:1.3}
+.us{font-size:14px;font-weight:600;color:var(--u)}
+.us.ok{color:var(--good)}
+.banner{background:var(--good-bg);border:1px solid var(--good);border-radius:14px;padding:12px 14px;font-weight:500}
+/* belajar */
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px}
+.seg i{height:6px;border-radius:3px;background:var(--line)}
+.seg i.on{background:var(--u)} .seg i.cur{background:var(--ask)}
+.goal{border-left:0;background:var(--u-soft);border-radius:14px;padding:12px 14px}
+.qtext{font-size:19px;line-height:1.5;font-weight:500}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:600}
+.hearts{display:inline-flex;gap:2px}
+.h-on{fill:var(--bad);stroke:var(--bad)} .h-off{fill:none;stroke:var(--muted);stroke-width:1.5}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{min-height:54px;border:2px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font-weight:500;font-size:18px;text-align:left;padding:12px 16px}
+.opt.sel{border-color:var(--u);background:var(--u-soft)}
+.opt.ok{border-color:var(--good);background:var(--good-bg)}
+.opt.no{border-color:var(--bad);background:var(--bad-bg)}
+.opt:disabled{color:var(--ink)}
+.numf{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.numf input{flex:1 1 120px;width:auto;font-size:20px;font-weight:600}
+.fb{border-radius:14px;padding:12px 14px}
+.fb.good{background:var(--good-bg);border:1px solid var(--good)}
+.fb.bad{background:var(--bad-bg);border:1px solid var(--bad)}
+.fb.hint{background:var(--info-bg);border:1px solid var(--info)}
+.hl-info{background:var(--info-bg);box-shadow:inset 0 -3px 0 var(--info);border-radius:4px;padding:0 3px}
+.hl-ask{background:var(--ask-bg);box-shadow:inset 0 -3px 0 var(--ask);border-radius:4px;padding:0 3px}
+.big{font-size:20px}
+.num{font:600 22px var(--display)}
+.step{display:grid;grid-template-columns:1fr auto 44px auto;gap:10px;align-items:center}
+.rb{width:48px;height:48px;border-radius:50%;border:2px solid var(--u);background:var(--surface);color:var(--u);font-size:26px;font-weight:600;line-height:1}
+.rb:disabled{opacity:.35}
+.step output{font:600 24px var(--display);text-align:center}
+.pop{animation:pop .4s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tank{display:block;width:100%;max-height:230px}
+.tank .tw{fill:var(--surface);stroke:none}
+.tank .water{fill:var(--ask);opacity:.6;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(var(--lvl,0));transition:transform 1.4s ease}
+.tank .tf{fill:none;stroke:var(--ink);stroke-width:3}
+.tank .gl{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3}
+.tank text{fill:var(--ink);font:600 11px var(--body)}
+.chunks{display:flex;flex-wrap:wrap;gap:8px}
+.chunk{min-height:46px;padding:8px 12px;border:2px dashed var(--line);border-radius:12px;background:var(--surface);text-align:left;font-size:17px}
+.chunk.m-info{border:2px solid var(--info);background:var(--info-bg)}
+.chunk.m-ask{border:2px solid var(--ask);background:var(--ask-bg)}
+.chunk.bad{border-color:var(--bad);box-shadow:0 0 0 2px var(--bad)}
+.chunk small{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.mode{display:flex;align-items:center;gap:8px;min-height:50px;border:2px solid var(--line);border-radius:12px;background:var(--surface);padding:8px 12px;font-weight:500;text-align:left}
+.mode[aria-pressed="true"]{border-color:var(--u);background:var(--u-soft)}
+.sw{width:18px;height:18px;border-radius:5px;flex:none}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mgrid .opt{text-align:center;padding-inline:8px}
+.srow{display:flex;justify-content:space-between;gap:10px;padding-block:8px;border-bottom:1px solid var(--line)}
+.srow:last-child{border-bottom:0}
+.score{font:600 56px/1 var(--display);color:var(--u)}
+.tbl{display:flex;flex-direction:column}
+.tbl div{display:flex;justify-content:space-between;gap:10px;padding-block:8px;border-bottom:1px solid var(--line)}
+.tbl div:last-child{border-bottom:0}
+.formula{font:600 22px/1.3 var(--display)}
+.tm{display:flex;flex-direction:column;gap:4px;font-weight:600}
+.cap{color:var(--muted);font-size:15px}
+h2{color:var(--u)}
+.hero{background:var(--u-soft);border-color:transparent}
+.ubar{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ubar i{height:14px;border-radius:7px;background:var(--line)}
+.ubar i.on{background:var(--u)}
+.il text{font:600 12px var(--body);fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.il text.q{fill:var(--bad);font-size:16px}
+.il .ig-back{fill:var(--surface);fill-opacity:.55;stroke:var(--muted);stroke-width:1}
+.il .ig-floor{fill:var(--line);stroke:var(--muted);stroke-width:1}
+.il .ig-front{fill:var(--ask);fill-opacity:.1;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.il .ig-rim{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.il .iw-l{fill:var(--ask);fill-opacity:.72;stroke:none}
+.il .iw-r{fill:color-mix(in srgb,var(--ask),#000 22%);fill-opacity:.78;stroke:none}
+.il .iw-t{fill:color-mix(in srgb,var(--ask),#fff 38%);fill-opacity:.92;stroke:none}
+.il .tape{fill:#fff;fill-opacity:.4;stroke:none}
+.il .rib{fill:var(--info);stroke:color-mix(in srgb,var(--info),#000 40%);stroke-width:.8}
+.il .bk-b{fill:var(--k3);stroke:color-mix(in srgb,var(--k3),#000 45%);stroke-width:1}
+.il .bk-r{fill:color-mix(in srgb,var(--k3),#000 35%);stroke:none}
+.il .bk-h{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round}
+.il .gl-cap{fill:var(--k4);stroke:none}
+.il .gl-body{fill:var(--surface);fill-opacity:.6;stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.il .gl-water{fill:var(--ask);fill-opacity:.65;stroke:none}
+.tank .tfish{opacity:clamp(0,calc(var(--lvl,0)*2),1);transition:opacity 1.4s ease}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hdr"><span class="logo" id="logo"></span><span class="brand">Jelajah Ruang</span></header>
+  <main id="view"></main>
+</div>
+<nav class="nav" aria-label="Menu utama"><div class="navin" id="nav">
+  <button data-tab="beranda" class="u1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Beranda</button>
+  <button data-tab="belajar" class="u0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-1.5-1.5-4-2-8-2v14c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2V4c-4 0-6.5.5-8 2zM12 6v14"/></svg>Belajar</button>
+  <button data-tab="latihan" class="u3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/></svg>Latihan</button>
+  <button data-tab="skor" class="u4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"/></svg>Skor</button>
+</div></nav>
+
+<script>
+(function(){
+const $=(s,el)=>(el||document).querySelector(s);
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a};
+const parseNum=v=>{const s=String(v).replace(/[.\s]/g,'').replace(',','.');return s===''||isNaN(Number(s))?NaN:Number(s)};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- penyimpanan di HP siswa ---------- */
+const KEY='jelajah-ruang-v1';
+let S={name:'',done:{},scores:{},refl:{},notes:{},pos:{}};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- gambar balok dari kubus satuan ---------- */
+function drawBlock(p,l,t,o){
+  o=o||{};
+  const s=22,w=s*0.866,hh=s*0.5;
+  const L=(i,j,k)=>[(i-j)*w,(i+j)*hh-k*s];
+  const pt=a=>a[0].toFixed(1)+','+a[1].toFixed(1);
+  const poly=(pts,c)=>'<polygon class="'+c+'" points="'+pts.map(pt).join(' ')+'"/>';
+  const tf=o.tFull||t, minX=-l*w-3, maxX=p*w+3, minY=-Math.max(tf,1)*s-3, maxY=(p+l)*hh+3;
+  let out='';
+  if(o.floor)out+=poly([L(0,0,0),L(p,0,0),L(p,l,0),L(0,l,0)],'floor');
+  const cubes=[];
+  for(let k=0;k<t;k++)for(let i=0;i<p;i++)for(let j=0;j<l;j++)cubes.push([i,j,k]);
+  cubes.sort((a,b)=>(a[0]+a[1]+a[2])-(b[0]+b[1]+b[2]));
+  cubes.forEach(c=>{const i=c[0],j=c[1],k=c[2];
+    out+=poly([L(i,j,k+1),L(i+1,j,k+1),L(i+1,j+1,k+1),L(i,j+1,k+1)],'top k'+(k%6));
+    out+=poly([L(i,j+1,k+1),L(i+1,j+1,k+1),L(i+1,j+1,k),L(i,j+1,k)],'lft k'+(k%6));
+    out+=poly([L(i+1,j,k+1),L(i+1,j+1,k+1),L(i+1,j+1,k),L(i+1,j,k)],'rgt k'+(k%6));
+  });
+  return '<svg class="blk" viewBox="'+minX.toFixed(1)+' '+minY.toFixed(1)+' '+(maxX-minX).toFixed(1)+' '+(maxY-minY).toFixed(1)+'" role="img" aria-label="Balok dari '+(p*l*t)+' kotak kecil ('+p+' kali '+l+' kali '+t+')">'+out+'</svg>';
+}
+function tank(lvl,labels){
+  return '<svg class="tank" id="tk" style="--lvl:'+lvl+'" viewBox="0 0 240 150" role="img" aria-label="Akuarium berisi air tiga perempat bagian">'+
+  '<rect class="tw" x="30" y="20" width="160" height="110"/><rect class="water" x="30" y="20" width="160" height="110"/>'+
+  '<g class="tfish"><polygon points="82,88 72,81 72,95" style="fill:var(--k0)"/><ellipse cx="95" cy="88" rx="11" ry="6.5" style="fill:var(--k1)"/><circle cx="101" cy="86" r="1.6" style="fill:var(--ink)"/>'+
+  '<polygon points="158,106 168,99 168,113" style="fill:var(--k0)"/><ellipse cx="147" cy="106" rx="9" ry="5.5" style="fill:var(--k2)"/><circle cx="142" cy="104.5" r="1.4" style="fill:var(--ink)"/></g>'+
+  '<rect class="tf" x="30" y="20" width="160" height="110" rx="3"/>'+
+  (labels?'<line class="gl" x1="30" y1="20" x2="196" y2="20"/><line class="gl" x1="30" y1="47.5" x2="196" y2="47.5"/><text x="200" y="24">72 L</text><text x="200" y="51">54 L</text>':'')+
+  '<text x="110" y="145">60 cm</text></svg>';
+}
+
+/* ---------- gambar ilustrasi soal ---------- */
+function iso(ox,oy){
+  const P=(x,y,z)=>[ox+(x-y)*0.866,oy+(x+y)*0.5-z];
+  const poly=(arr,cls)=>'<polygon class="'+cls+'" points="'+arr.map(q=>{const r=P(q[0],q[1],q[2]);return r[0].toFixed(1)+','+r[1].toFixed(1)}).join(' ')+'"/>';
+  return {P:P,poly:poly};
+}
+function fishSVG(cx,cy,sc){
+  return '<g transform="translate('+cx.toFixed(1)+' '+cy.toFixed(1)+') scale('+sc.toFixed(2)+')"><polygon points="-9,0 -21,-8 -21,8" style="fill:var(--k0);stroke:none"/><ellipse rx="12" ry="7" style="fill:var(--k1);stroke:none"/><circle cx="6" cy="-1.5" r="1.8" style="fill:var(--ink);stroke:none"/></g>';
+}
+function bucketSVG(x,y,label){
+  return '<path class="bk-h" d="M'+(x-21)+' '+(y-50)+' Q'+x+' '+(y-88)+' '+(x+21)+' '+(y-50)+'"/>'+
+   '<path class="bk-b" d="M'+(x-27)+' '+(y-52)+' L'+(x+27)+' '+(y-52)+' L'+(x+20)+' '+y+' L'+(x-20)+' '+y+' Z"/>'+
+   '<ellipse class="bk-r" cx="'+x+'" cy="'+(y-52)+'" rx="27" ry="6"/>'+
+   '<text x="'+x+'" y="'+(y+17)+'" text-anchor="middle">'+label+'</text>';
+}
+function galonSVG(o){
+  return '<svg class="blk il" viewBox="0 0 300 190" role="img" aria-label="Galon berisi air">'+
+   '<rect class="gl-cap" x="128" y="22" width="44" height="14" rx="4"/>'+
+   '<path class="gl-body" d="M134 36 H166 V52 Q200 60 200 92 V160 Q200 172 188 172 H112 Q100 172 100 160 V92 Q100 60 134 52 Z"/>'+
+   '<path class="gl-water" d="M101 104 H199 V160 Q199 171 188 171 H112 Q101 171 101 160 Z"/>'+
+   '<text x="150" y="142" text-anchor="middle">'+o.label+'</text></svg>';
+}
+function illus(o){
+  if(o.kind==='galon')return galonSVG(o);
+  const p=o.p,l=o.l,t=o.t,side=!!(o.bucket||o.mini);
+  const aw=side?170:240,ah=120,left=side?8:30;
+  const k=Math.min(aw/((p+l)*0.866),ah/(t+(p+l)*0.5));
+  const a=p*k,b=l*k,c=t*k,bw=(a+b)*0.866,bh=c+(a+b)*0.5;
+  const ox=left+(aw-bw)/2+b*0.866,oy=22+(ah-bh)/2+c;
+  const I=iso(ox,oy),P=I.P,poly=I.poly;
+  let g='';
+  if(o.kind==='glass'){
+    const f=o.water||0,h=c*f;
+    g+=poly([[0,0,0],[0,b,0],[0,b,c],[0,0,c]],'ig-back')+poly([[0,0,0],[a,0,0],[a,0,c],[0,0,c]],'ig-back')+poly([[0,0,0],[a,0,0],[a,b,0],[0,b,0]],'ig-floor');
+    if(f>0){
+      g+=poly([[0,b,0],[a,b,0],[a,b,h],[0,b,h]],'iw-l')+poly([[a,0,0],[a,b,0],[a,b,h],[a,0,h]],'iw-r')+poly([[0,0,h],[a,0,h],[a,b,h],[0,b,h]],'iw-t');
+      if(o.deco==='fish'&&f>=.4){const sc=Math.max(.7,Math.min(1.6,h/40)),f1=P(a*.55,b*.5,h*.5),f2=P(a*.25,b*.7,h*.3);g+=fishSVG(f1[0],f1[1],sc)+fishSVG(f2[0],f2[1],sc*.75)}
+    }
+    g+=poly([[0,b,0],[a,b,0],[a,b,c],[0,b,c]],'ig-front')+poly([[a,0,0],[a,b,0],[a,b,c],[a,0,c]],'ig-front')+poly([[0,0,c],[a,0,c],[a,b,c],[0,b,c]],'ig-rim');
+  }else{
+    const cc=o.color||'k1',d=o.deco;
+    g+=poly([[0,0,c],[a,0,c],[a,b,c],[0,b,c]],'top '+cc)+poly([[0,b,0],[a,b,0],[a,b,c],[0,b,c]],'lft '+cc)+poly([[a,0,0],[a,b,0],[a,b,c],[a,0,c]],'rgt '+cc);
+    if(d==='tape')g+=poly([[a*.42,0,c],[a*.58,0,c],[a*.58,b,c],[a*.42,b,c]],'tape')+poly([[a*.42,b,c],[a*.58,b,c],[a*.58,b,c*.55],[a*.42,b,c*.55]],'tape');
+    if(d==='lid')g+=poly([[0,b,c],[a,b,c],[a,b,c*.78],[0,b,c*.78]],'tape')+poly([[a,0,c],[a,b,c],[a,b,c*.78],[a,0,c*.78]],'tape');
+    if(d==='ribbon'){
+      g+=poly([[0,b*.42,c],[a,b*.42,c],[a,b*.58,c],[0,b*.58,c]],'rib')+poly([[a,b*.42,c],[a,b*.58,c],[a,b*.58,0],[a,b*.42,0]],'rib');
+      g+=poly([[a*.42,0,c],[a*.58,0,c],[a*.58,b,c],[a*.42,b,c]],'rib')+poly([[a*.42,b,c],[a*.58,b,c],[a*.58,b,0],[a*.42,b,0]],'rib');
+      const m=P(a/2,b/2,c);g+='<circle class="rib" cx="'+m[0].toFixed(1)+'" cy="'+(m[1]-3).toFixed(1)+'" r="5"/>';
+    }
+    if(d==='pencils')[['k0',.3,-6],['k2',.5,0],['k3',.7,6]].forEach(z=>{const m=P(a*z[1],b*.5,c);g+='<line x1="'+m[0].toFixed(1)+'" y1="'+(m[1]+2).toFixed(1)+'" x2="'+(m[0]+z[2]).toFixed(1)+'" y2="'+(m[1]-30).toFixed(1)+'" style="stroke:var(--'+z[0]+');stroke-width:5;stroke-linecap:round"/>'});
+  }
+  const lab=o.lab||{};
+  const T=(x,y,s,an)=>'<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="'+an+'"'+(s==='?'?' class="q"':'')+'>'+s+'</text>';
+  if(lab.p){const m=P(a/2,b,0);g+=T(m[0]-10,m[1]+18,lab.p,'middle')}
+  if(lab.l){const m=P(a,b/2,0);g+=T(m[0]+10,m[1]+18,lab.l,'middle')}
+  if(lab.t){const m=P(a,0,c/2);g+=T(m[0]+9,m[1]+4,lab.t,'start')}
+  if(o.bucket)g+=bucketSVG(262,126,o.bucket);
+  if(o.mini){const J=iso(262,92),q=22;
+    g+=J.poly([[0,0,q],[q,0,q],[q,q,q],[0,q,q]],'top k3')+J.poly([[0,q,0],[q,q,0],[q,q,q],[0,q,q]],'lft k3')+J.poly([[q,0,0],[q,q,0],[q,q,q],[q,0,q]],'rgt k3')+T(262,131,o.mini,'middle')+T(262,62,'kotak kecil','middle');}
+  return '<svg class="blk il" viewBox="0 0 300 190" role="img" aria-label="'+(o.alt||'Gambar soal')+'">'+g+'</svg>';
+}
+const picHTML=o=>'<div class="fig">'+illus(o)+(o.cap?'<p class="cap" style="text-align:center">'+o.cap+'</p>':'')+'</div>';
+const heart=on=>'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path class="'+(on?'h-on':'h-off')+'" d="M12 21s-7-4.6-9.3-9.2C1.3 8.9 3 5.5 6.3 5.5c2 0 3.5 1.2 5.7 3.4 2.2-2.2 3.7-3.4 5.7-3.4 3.3 0 5 3.4 3.6 6.3C19 16.4 12 21 12 21z"/></svg>';
+const hearts=n=>'<span class="hearts" role="img" aria-label="Nyawa '+n+' dari 3">'+[1,2,3].map(i=>heart(i<=n)).join('')+'</span>';
+
+/* ---------- isi soal ---------- */
+const Q={
+0:[
+ {t:'Berapa hasil 5 × 4 × 3?',opts:['12','60','45'],a:'60',h:'Kalikan dua angka dulu: 5 × 4 = 20. Lalu kalikan dengan 3.',e:'5 × 4 = 20, lalu 20 × 3 = 60.'},
+ {t:'Bangun ruang yang semua sisinya berbentuk persegi adalah ...',opts:['Balok','Kubus','Tabung'],a:'Kubus',h:'Semua rusuknya sama panjang.',e:'Kubus punya 6 sisi persegi yang sama besar.'},
+ {t:'1 meter sama dengan ... cm',opts:['10','100','1.000'],a:'100',h:'Penggaris 1 meter berisi seratus bagian kecil.',e:'1 meter = 100 cm.'},
+ {pic:{kind:'solid',p:30,l:18,t:12,color:'k4',deco:'lid',alt:'Kotak sepatu'},t:'Kotak sepatu berbentuk ...',opts:['Bola','Balok','Kerucut'],a:'Balok',h:'Kotak sepatu punya 6 sisi persegi panjang.',e:'Kotak sepatu berbentuk balok.'},
+ {t:'Berapa hasil 2 × 2 × 2?',opts:['6','8','4'],a:'8',h:'2 × 2 = 4. Lalu kalikan 2 lagi.',e:'2 × 2 = 4, lalu 4 × 2 = 8.'}
+],
+1:[
+ {block:[3,2,1],t:'Lalu Dika menata balok mainan di dasar kotak: 3 balok ke samping dan 2 baris ke belakang. Ada berapa balok mainan di dasar kotak?',opts:['5','6','8'],a:'6',h:'Hitung satu baris dulu, ada 3 balok. Ada 2 baris.',e:'3 × 2 = 6 balok mainan.'},
+ {block:[3,2,2],t:'Dika menumpuk satu lapis lagi di atasnya, jadi ada 2 lapis. Berapa balok mainan seluruhnya?',opts:['10','12','14'],a:'12',h:'Satu lapis berisi 6 balok. Ada 2 lapis.',e:'6 × 2 = 12 balok mainan.'},
+ {block:[4,3,2],t:'Baiq Rani menata kotak jajanan di rak. Tiap lapis ada 4 kotak ke samping dan 3 kotak ke belakang, dan ada 2 lapis. Berapa kotak jajanan di rak itu?',opts:['12','24','20'],a:'24',h:'Satu lapis berisi 4 × 3 kotak. Ada 2 lapis.',e:'12 × 2 = 24 kotak jajanan.'},
+ {block:[3,3,3],t:'Dika memenuhi sebuah kotak berbentuk kubus dengan balok mainan: 3 balok ke samping, 3 ke belakang, dan 3 lapis. Berapa balok mainan seluruhnya?',a:27,u:'balok',h:'Satu lapis berisi 3 × 3 balok. Ada 3 lapis.',e:'9 × 3 = 27 balok mainan.'},
+ {block:[5,2,5],t:'Ibu menata kotak kue di dalam dus besar. Setiap lapis berisi 10 kotak, dan ada 5 lapis. Berapa kotak kue di dalam dus itu?',a:50,u:'kotak',h:'Kalikan isi tiap lapis dengan banyak lapis.',e:'5 × 10 = 50 kotak kue. Makin banyak kotak yang muat, makin besar volume dus.'}
+],
+2:[
+ {pic:{kind:'solid',p:5,l:5,t:5,color:'k5',deco:'ribbon',lab:{p:'5 cm',l:'5 cm',t:'5 cm'},alt:'Kotak kado berbentuk kubus'},t:'Baiq Rani membuat kotak kado berbentuk kubus dengan rusuk 5 cm. Berapa cm³ ruang di dalam kotak kado itu?',a:125,u:'cm³',h:'Rumus kubus: s × s × s.',e:'V = 5 × 5 × 5 = 125 cm³.'},
+ {pic:{kind:'solid',p:8,l:5,t:2,color:'k3',deco:'pencils',lab:{p:'8 cm',l:'5 cm',t:'2 cm'},alt:'Kotak pensil'},t:'Kotak pensil Lalu Dika berbentuk balok. Panjangnya 8 cm, lebarnya 5 cm, dan tingginya 2 cm. Berapa cm³ volumenya?',a:80,u:'cm³',h:'Rumus balok: p × l × t.',e:'V = 8 × 5 × 2 = 80 cm³.'},
+ {pic:{kind:'solid',p:10,l:4,t:3,color:'k1',deco:'ribbon',lab:{p:'10 cm',l:'4 cm',t:'3 cm'},alt:'Kotak oleh-oleh'},t:'Kotak oleh-oleh dari Ibu berbentuk balok dengan panjang 10 cm, lebar 4 cm, dan tinggi 3 cm. Berapa volumenya?',opts:['17 cm³','34 cm³','120 cm³'],a:'120 cm³',h:'Kalikan tiga ukurannya, jangan dijumlah.',e:'V = 10 × 4 × 3 = 120 cm³.'},
+ {pic:{kind:'galon',label:'4.000 cm³'},t:'Galon kecil di rumah Rani memuat 4.000 cm³ air. Berapa liter air di galon itu?',opts:['4 liter','40 liter','400 liter'],a:'4 liter',h:'Ingat: 1 liter = 1.000 cm³.',e:'4.000 ÷ 1.000 = 4 liter.'},
+ {pic:{kind:'glass',p:1,l:1,t:1,water:1,lab:{p:'1 m',l:'1 m',t:'1 m'},alt:'Bak air kubus'},t:'Bak penampung air di sekolah Rani berukuran 1 m³ dan diisi penuh. Berapa liter airnya?',opts:['10 liter','100 liter','1.000 liter'],a:'1.000 liter',h:'Lihat tabel satuan di langkah Pahami.',e:'1 m³ = 1.000 liter.'}
+],
+3:[
+ {pic:{kind:'solid',p:20,l:5,t:4,color:'k3',deco:'pencils',lab:{p:'20 cm',l:'5 cm',t:'4 cm'},alt:'Kotak pensil'},t:'Kasus Kotak Pensil. Lalu Dika kehilangan kotak pensilnya. Kotak itu berbentuk balok berukuran 20 cm × 5 cm × 4 cm. Detektif, berapa cm³ volume kotak pensil itu?',a:400,u:'cm³',h:'Tulis dulu Diketahui dan Ditanya. Lalu kalikan p × l × t.',e:'V = 20 × 5 × 4 = 400 cm³.'},
+ {pic:{kind:'glass',p:50,l:50,t:50,water:0,lab:{p:'50 cm',l:'50 cm',t:'50 cm'},alt:'Bak mandi kubus'},t:'Kasus Bak Mandi. Baiq Rani ingin mengisi bak mandi berbentuk kubus dengan rusuk 50 cm sampai penuh. Berapa liter air yang dibutuhkan?',a:125,u:'liter',h:'Hitung volume dalam cm³, lalu bagi 1.000 untuk jadi liter.',e:'V = 50 × 50 × 50 = 125.000 cm³ = 125 liter.'},
+ {pic:{kind:'glass',p:40,l:25,t:20,water:1,deco:'fish',lab:{p:'40 cm',l:'25 cm',t:'20 cm'},alt:'Akuarium ikan cupang'},t:'Kasus Ikan Cupang. Dika memelihara ikan cupang di akuarium berukuran 40 cm × 25 cm × 20 cm. Akuarium itu diisi penuh air. Berapa liter airnya?',opts:['2 liter','20 liter','200 liter'],a:'20 liter',h:'40 × 25 = 1.000, lalu kali 20. Ubah cm³ ke liter.',e:'V = 40 × 25 × 20 = 20.000 cm³ = 20 liter.'},
+ {pic:{kind:'glass',p:50,l:40,t:30,water:0,bucket:'5 liter',lab:{p:'50 cm',l:'40 cm',t:'30 cm'},alt:'Bak kosong dan ember'},t:'Kasus Ember Ajaib. Pak Lalu mengisi bak kosong berukuran 50 cm × 40 cm × 30 cm memakai ember 5 liter. Berapa ember yang harus dituang sampai bak penuh?',a:12,u:'ember',h:'Langkah 1: hitung volume bak dalam liter. Langkah 2: bagi dengan isi ember.',e:'V = 50 × 40 × 30 = 60.000 cm³ = 60 liter. 60 ÷ 5 = 12 ember.'},
+ {pic:{kind:'glass',p:100,l:50,t:40,water:.75,deco:'fish',lab:{p:'100 cm',l:'50 cm',t:'40 cm'},cap:'Sudah berisi 150 liter air',alt:'Kolam lele'},t:'Kasus Kolam Lele. Kolam lele Pak Lalu berukuran 100 cm × 50 cm × 40 cm dan sudah berisi 150 liter air. Berapa liter air lagi agar kolam penuh?',a:50,u:'liter',h:'Hitung volume kolam dalam liter, lalu kurangi dengan air yang sudah ada.',e:'V = 100 × 50 × 40 = 200.000 cm³ = 200 liter. 200 − 150 = 50 liter.'}
+],
+4:[
+ {time:45,pic:{kind:'glass',p:80,l:80,t:80,water:0,lab:{p:'80 cm',l:'80 cm',t:'80 cm'},alt:'Bak mandi kubus'},t:'Misi 1, Bak Mandi Desa. Bak mandi berbentuk kubus dengan rusuk 80 cm akan diisi penuh air. Berapa liter air yang dibutuhkan?',a:512,u:'liter',e:'V = 80 × 80 × 80 = 512.000 cm³ = 512 liter.'},
+ {time:45,pic:{kind:'solid',p:10,l:6,t:6,color:'k4',deco:'tape',lab:{p:'10 cm',l:'6 cm',t:'?'},cap:'Volume = 360 cm³',alt:'Kotak rahasia'},t:'Misi 2, Kotak Rahasia. Volume sebuah kotak balok adalah 360 cm³. Panjangnya 10 cm dan lebarnya 6 cm. Berapa tinggi kotak itu?',a:6,u:'cm',e:'t = 360 ÷ (10 × 6) = 6 cm.'},
+ {time:90,pic:{kind:'solid',p:40,l:30,t:20,color:'k1',deco:'tape',lab:{p:'40 cm',l:'30 cm',t:'20 cm'},mini:'10 cm',alt:'Kardus dan kotak kecil'},t:'Misi 3, Kardus Penuh Kotak. Pak Lalu punya kardus berukuran 40 cm × 30 cm × 20 cm. Ia ingin mengisinya dengan kotak kecil berbentuk kubus berusuk 10 cm. Berapa kotak kecil yang muat?',a:24,u:'kotak',e:'40 ÷ 10 = 4, 30 ÷ 10 = 3, 20 ÷ 10 = 2. Jadi 4 × 3 × 2 = 24 kotak.'},
+ {time:90,pic:{kind:'glass',p:50,l:40,t:30,water:.4,lab:{p:'50 cm',l:'40 cm',t:'30 cm'},cap:'Sudah berisi 24 liter air',alt:'Bak air sekolah'},t:'Misi 4, Bak Air Sekolah. Bak air berukuran panjang 50 cm, lebar 40 cm, dan tinggi 30 cm. Bak itu sudah berisi 24 liter air. Berapa liter air yang masih diperlukan agar bak penuh?',a:36,u:'liter',e:'V = 50 × 40 × 30 = 60.000 cm³ = 60 liter. 60 − 24 = 36 liter.'},
+ {time:90,pic:{kind:'glass',p:100,l:60,t:50,water:0,bucket:'10 liter',lab:{p:'100 cm',l:'60 cm',t:'50 cm'},alt:'Bak kosong dan ember'},t:'Misi 5, Ember Pak Lalu. Pak Lalu mengisi bak kosong berukuran 100 cm × 60 cm × 50 cm memakai ember berisi 10 liter. Berapa ember air yang diperlukan sampai bak penuh?',a:30,u:'ember',e:'V = 100 × 60 × 50 = 300.000 cm³ = 300 liter. 300 ÷ 10 = 30 ember.'}
+]};
+const TANTANG={
+1:{block:[4,5,3],t:'Pak Lalu menata kardus air mineral di gudang: 4 baris, tiap baris 5 kardus, dan ada 3 lapis. Berapa kardus seluruhnya?',a:60,u:'kardus',h:'Hitung satu lapis dulu: 4 × 5. Lalu kalikan dengan banyak lapis.',e:'4 × 5 × 3 = 60 kardus.'},
+3:{pic:{kind:'glass',p:60,l:40,t:50,water:.667,lab:{p:'60 cm',l:'40 cm',t:'50 cm'},cap:'Terisi ⅔ bagian',alt:'Bak terisi dua pertiga'},t:'Kasus Bak Penampung. Pak Lalu mengisi bak berukuran 60 cm × 40 cm × 50 cm dengan air ⅔ bagian. Berapa liter air di dalam bak?',a:80,u:'liter',h:'Cari volume bak, ubah ke liter, lalu hitung ⅔ bagiannya.',e:'V = 60 × 40 × 50 = 120.000 cm³ = 120 liter. ⅔ × 120 = 80 liter.'}
+};
+
+/* ---------- daftar unit ---------- */
+const FULL=['mulai','jelajahi','pahami','coba','tantang','refleksi'];
+const UNITS=[
+ {id:0,title:'Cek Kemampuan Awal',sub:'Kuis 5 soal',mins:'5',stages:['mulai','coba']},
+ {id:1,title:'Isi Sebuah Ruang',sub:'Mengenal volume',mins:'20 sampai 30',stages:FULL},
+ {id:2,title:'Rumus Volume',sub:'Kubus, balok, dan satuan volume',mins:'20 sampai 30',stages:FULL},
+ {id:3,title:'Detektif Soal Cerita',sub:'Empat langkah menyelesaikan soal cerita',mins:'20 sampai 30',stages:['mulai','jelajahi','pahami','tandai','coba','tantang','refleksi']},
+ {id:4,title:'Tantangan Akhir',sub:'Misi Bak Air',mins:'20 sampai 30',stages:['mulai','coba','refleksi']}
+];
+const SN={mulai:'Mulai',jelajahi:'Jelajahi',pahami:'Pahami',tandai:'Tandai',coba:'Coba',tantang:'Tantang',refleksi:'Refleksi'};
+const stageName=(u,s)=>s==='coba'&&u.id===0?'Kuis awal':s==='coba'&&u.id===4?'Misi Bak Air':SN[s];
+const GOALS={
+ 1:'Aku bisa menjelaskan bahwa volume adalah ukuran ruang yang terisi, dan menghitungnya dengan kotak-kotak kecil yang sama besar.',
+ 2:'Aku bisa menghitung volume kubus dan balok, serta mengubah cm³ menjadi liter.',
+ 3:'Aku bisa menemukan informasi penting dalam soal cerita dan menyelesaikannya dengan runtut.',
+ 4:'Aku bisa memakai semua yang sudah kupelajari untuk menjawab soal cerita volume.'
+};
+
+/* ---------- navigasi ---------- */
+const view=$('#view');
+let route={tab:'beranda'};
+let timer=null;
+function go(r){route=r;render()}
+function render(){
+  clearInterval(timer);
+  view.className=route.unit!=null?'u'+route.unit:route.quiz!=null?'u'+route.quiz:'';
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===route.tab?'page':'false'));
+  if(route.unit!=null)renderUnit();
+  else if(route.quiz!=null)renderStandalone();
+  else ({beranda:renderHome,belajar:renderLearn,latihan:renderPractice,skor:renderScore})[route.tab]();
+  window.scrollTo(0,0);
+}
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go({tab:b.dataset.tab})};
+$('#logo').innerHTML=drawBlock(2,2,2);
+function openUnit(id){const u=UNITS[id];const st=S.done[id]?0:Math.min(S.pos[id]||0,u.stages.length-1);go({tab:'belajar',unit:id,stage:st})}
+
+function followUp(nilai){
+  if(nilai>=70)return '<div class="card"><b>Pengayaan</b><p>Nilaimu sudah bagus. Coba soal tantangan ini di buku tulismu: dua balok ditempelkan menjadi satu balok besar. Balok A berukuran 10 cm × 5 cm × 4 cm. Balok B berukuran 10 cm × 5 cm × 6 cm. Berapa volume gabungan kedua balok? Bahas jawabanmu bersama gurumu. Kamu juga boleh membuat soal cerita sendiri dari benda di rumah.</p></div>';
+  return '<div class="card"><b>Belajar lagi, yuk</b><p>Nilaimu masih di bawah 70. Ulangi Unit 2 dan Unit 3, lalu kerjakan latihannya lagi. Gurumu akan membantu bagian yang masih sulit.</p></div>';
+}
+
+/* ---------- Beranda, Belajar, Latihan, Skor ---------- */
+function renderHome(){
+  const n=Object.keys(S.done).length;
+  const next=UNITS.find(u=>!S.done[u.id]);
+  view.innerHTML='<div class="fig hero">'+drawBlock(4,3,4)+'</div>'+
+  '<h1>'+(S.name?'Halo, '+esc(S.name)+'!':'Halo, penjelajah!')+'</h1>'+
+  '<p class="lead">Ayo belajar volume kubus dan balok lewat soal cerita. Kamu bisa berhenti dan lanjut kapan saja.</p>'+
+  (S.name?'':'<form id="nm" class="card"><label for="nama">Siapa nama panggilanmu?</label><div class="row"><input id="nama" maxlength="20" autocomplete="off"><button class="btn" type="submit">Simpan</button></div></form>')+
+  '<div class="card"><div class="between"><b>Kemajuanmu</b><span>'+n+' dari 5 unit selesai</span></div><div class="ubar">'+UNITS.map(u=>'<i class="u'+u.id+(S.done[u.id]?' on':'')+'" title="Unit '+u.id+'"></i>').join('')+'</div></div>'+
+  (next?'<button class="btn big" id="cont">Lanjutkan belajar: Unit '+next.id+'</button>':'<div class="card good"><b>Semua unit sudah selesai.</b><p>Lihat nilaimu di menu Skor.</p></div>');
+  const f=$('#nm');if(f)f.onsubmit=e=>{e.preventDefault();const v=$('#nama').value.trim();if(v){S.name=v;save();renderHome()}};
+  const c=$('#cont');if(c)c.onclick=()=>openUnit(next.id);
+}
+function renderLearn(){
+  view.innerHTML=(route.msg?'<div class="banner" role="status">'+route.msg+'</div>':'')+
+  '<h2>Belajar</h2><p class="lead">Pilih unit. Setiap unit berdiri sendiri, jadi kamu boleh berhenti kapan saja.</p>'+
+  UNITS.map(u=>'<button class="ucard u'+u.id+'" data-u="'+u.id+'"><span class="un">'+u.id+'</span><span class="ut"><b>'+u.title+'</b><small>'+u.sub+' · '+u.mins+' menit</small></span><span class="us'+(S.done[u.id]?' ok':'')+'">'+(S.done[u.id]?'Selesai':(S.pos[u.id]?'Lanjut':'Mulai'))+'</span></button>').join('');
+  view.onclick=e=>{const b=e.target.closest('.ucard');if(b)openUnit(+b.dataset.u)};
+}
+function renderPractice(){
+  const names={0:'Cek Kemampuan Awal',1:'Kuis Unit 1: Isi Sebuah Ruang',2:'Kuis Unit 2: Rumus Volume',3:'Kuis Unit 3: Detektif Soal Cerita',4:'Misi Bak Air'};
+  view.innerHTML='<h2>Latihan</h2><p class="lead">Kerjakan lagi kapan saja. Nilai terbaikmu akan tersimpan.</p>'+
+  [4,1,2,3,0].map(i=>'<button class="ucard u'+i+'" data-q="'+i+'"><span class="un">'+(i===4?'★':i)+'</span><span class="ut"><b>'+names[i]+'</b><small>'+(i===4?'Berwaktu, 3 nyawa, 5 soal':'5 soal')+'</small></span><span class="us">'+(S.scores[i]!=null?'Nilai '+S.scores[i]:'Mulai')+'</span></button>').join('');
+  view.onclick=e=>{const b=e.target.closest('.ucard');if(b)go({tab:'latihan',quiz:+b.dataset.q})};
+}
+function renderScore(){
+  const fin=S.scores[4];
+  view.innerHTML='<h2>Skor</h2>'+
+  (fin!=null?'<div class="card"><p class="eyebrow">Nilai Misi Bak Air</p><p class="score">'+fin+'</p></div>'+followUp(fin):'<div class="card"><p>Nilai akhir muncul setelah kamu menyelesaikan Misi Bak Air di Unit 4.</p></div>')+
+  '<div class="card"><b>Nilai tiap unit</b><div>'+UNITS.map(u=>'<div class="srow u'+u.id+'"><span><i class="sw" style="background:var(--u);display:inline-block;vertical-align:-2px;margin-right:8px"></i>Unit '+u.id+'. '+u.title+'</span><b>'+(S.scores[u.id]!=null?S.scores[u.id]:'-')+'</b></div>').join('')+'</div></div>'+
+  '<p class="cap">Nilai di halaman ini hanya menilai jawaban akhir. Langkah pengerjaanmu dinilai guru memakai rubrik di kelas. Data tersimpan di HP ini saja.</p>'+
+  '<div class="card" id="rz"><button class="btn ghost" id="reset">Hapus semua data di HP ini</button></div>';
+  $('#reset').onclick=()=>{
+    $('#rz').innerHTML='<p>Nama, nilai, dan kemajuan di HP ini akan dihapus. Yakin?</p><div class="row"><button class="btn" id="yes">Ya, hapus</button><button class="btn ghost" id="no">Batal</button></div>';
+    $('#yes').onclick=()=>{S={name:'',done:{},scores:{},refl:{},notes:{},pos:{}};save();go({tab:'beranda'})};
+    $('#no').onclick=()=>renderScore();
+  };
+}
+
+/* ---------- layar unit ---------- */
+function renderUnit(){
+  const u=UNITS[route.unit],st=u.stages[route.stage];
+  S.pos[u.id]=route.stage;save();
+  view.onclick=null;
+  view.innerHTML='<div><button class="link" id="back">‹ Semua unit</button></div>'+
+  '<p class="eyebrow">Unit '+u.id+' · Langkah '+(route.stage+1)+' dari '+u.stages.length+'</p>'+
+  '<div class="seg">'+u.stages.map((_,i)=>'<i class="'+(i<route.stage?'on':i===route.stage?'cur':'')+'"></i>').join('')+'</div>'+
+  '<h2>'+stageName(u,st)+'</h2><div id="stage" class="stack"></div>';
+  $('#back').onclick=()=>go({tab:'belajar'});
+  ST[st](u,$('#stage'));
+}
+function navBtns(parent){
+  const u=UNITS[route.unit],last=route.stage===u.stages.length-1;
+  const d=document.createElement('div');d.className='navrow';
+  d.innerHTML=(route.stage>0?'<button class="btn ghost" data-a="prev">Kembali</button>':'')+'<button class="btn" data-a="next">'+(last?'Selesai':'Lanjut')+'</button>';
+  d.onclick=e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.a==='prev'){route.stage--;render()}
+    else if(last){S.done[u.id]=true;S.pos[u.id]=0;save();go({tab:'belajar',msg:'Unit '+u.id+' selesai. Hebat!'})}
+    else{route.stage++;render()}};
+  parent.appendChild(d);
+}
+const sub=r=>{const x=document.createElement('div');x.className='stack';r.appendChild(x);return x};
+
+/* ---------- mesin kuis ---------- */
+function runQuiz(root,cfg){
+  const qs=cfg.qs,n=qs.length,game=!!cfg.game,label=cfg.label||'Soal';
+  let i=0,pts=0,hits=0,tries=0,hearts_=3,done=false,opts=[];
+  function show(){
+    clearInterval(timer);
+    const q=qs[i];tries=0;done=false;opts=q.opts?shuffle(q.opts):[];
+    root.innerHTML=
+    '<div class="qhead"><span>'+label+' '+(i+1)+' dari '+n+'</span>'+(game?'<span id="hs">'+hearts(hearts_)+'</span><span>Skor '+hits*20+'</span>':'')+'</div>'+
+    '<div class="bar"><i style="width:'+(i/n*100)+'%"></i></div>'+
+    (game?'<div class="tm"><span><span id="tl">'+q.time+'</span> detik</span><div class="bar thin"><i id="tb" style="width:100%"></i></div></div>':'')+
+    (q.block?'<div class="fig">'+drawBlock(q.block[0],q.block[1],q.block[2])+'</div>':'')+(q.pic?picHTML(q.pic):'')+
+    '<p class="qtext">'+q.t+'</p>'+
+    (q.opts?'<div class="opts" id="ans">'+opts.map((o,k)=>'<button class="opt" data-i="'+k+'">'+o+'</button>').join('')+'</div>'
+      :'<form id="f" class="numf"><input id="inp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="Tulis jawabanmu dengan angka"><span>'+(q.u||'')+'</span><button class="btn" type="submit">Periksa</button></form>')+
+    '<div id="fb" aria-live="polite"></div>';
+    if(q.opts)$('#ans',root).onclick=e=>{const b=e.target.closest('.opt');if(b&&!b.disabled)judge(opts[+b.dataset.i],b)};
+    else{$('#f',root).onsubmit=e=>{e.preventDefault();judge($('#inp',root).value)};setTimeout(()=>{const x=$('#inp',root);if(x)x.focus()},60)}
+    if(game){let t=q.time;timer=setInterval(()=>{t--;const a=$('#tl',root),b=$('#tb',root);if(a)a.textContent=Math.max(t,0);if(b)b.style.width=Math.max(t,0)/q.time*100+'%';if(t<=0){clearInterval(timer);end(false,null,true)}},1000)}
+  }
+  function judge(v,btn){
+    if(done)return;
+    const q=qs[i];let ok;
+    if(q.opts)ok=v===q.a;
+    else{if(String(v).trim()===''){$('#fb',root).innerHTML='<div class="fb hint">Tulis jawabanmu dulu, ya.</div>';return}ok=parseNum(v)===q.a}
+    if(ok)return end(true,btn);
+    if(!game&&tries===0){
+      tries=1;if(btn){btn.disabled=true;btn.classList.add('no')}
+      $('#fb',root).innerHTML='<div class="fb hint"><b>Belum tepat.</b> Petunjuk: '+q.h+' Coba lagi.</div>';
+      if(!q.opts){const x=$('#inp',root);x.select()}
+      return;
+    }
+    end(false,btn);
+  }
+  function end(ok,btn,timeout){
+    if(done)return;done=true;clearInterval(timer);
+    const q=qs[i];
+    if(ok){hits++;pts+=tries===0?1:.5}else if(game){hearts_--;const h=$('#hs',root);if(h)h.innerHTML=hearts(hearts_)}
+    root.querySelectorAll('.opt,#inp,#f button').forEach(x=>x.disabled=true);
+    if(q.opts)root.querySelectorAll('.opt').forEach((b,k)=>{if(opts[k]===q.a)b.classList.add('ok');else if(b===btn)b.classList.add('no')});
+    const ans=q.opts?q.a:fmt(q.a)+(q.u?' '+q.u:'');
+    $('#fb',root).innerHTML=ok?'<div class="fb good"><b>Benar!</b> '+q.e+'</div>':'<div class="fb bad"><b>'+(timeout?'Waktu habis.':'Belum tepat.')+'</b> Jawabannya '+ans+'. '+q.e+'</div>';
+    const last=i===n-1||(game&&hearts_===0);
+    const nb=document.createElement('button');nb.className='btn';nb.textContent=last?'Lihat hasil':(label==='Soal'?'Soal berikutnya':'Lanjut');
+    nb.onclick=()=>{if(last)cfg.onDone({pts:game?hits:pts,n:n,hearts:hearts_,hits:hits});else{i++;show()}};
+    root.appendChild(nb);
+    nb.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }
+  show();
+}
+function quizCfg(uid){return{qs:Q[uid],game:uid===4}}
+function finishQuiz(uid,res,root,o){
+  const nilai=Math.round(res.pts/res.n*100);
+  S.scores[uid]=Math.max(S.scores[uid]!=null?S.scores[uid]:0,nilai);save();
+  let msg;
+  if(uid===0)msg=nilai>=80?'Kamu siap belajar Unit 1.':'Tidak apa-apa. Belajar Unit 1 pelan-pelan, ya.';
+  else msg=nilai>=70?'Hebat! Kamu sudah paham bagian ini.':'Ayo ulangi langkah Jelajahi dan Pahami, lalu coba lagi.';
+  if(uid===4&&res.hearts===0)msg='Nyawamu habis, jadi misi berhenti. '+msg;
+  root.innerHTML='<div class="card"><p class="eyebrow">Nilaimu</p><p class="score">'+nilai+'</p><p>'+msg+'</p></div>'+
+    (uid===4?followUp(nilai):'')+'<button class="btn ghost" id="again">Coba lagi</button>';
+  $('#again',root).onclick=o.again;
+  o.after();
+}
+function renderStandalone(){
+  const n=route.quiz;
+  view.onclick=null;
+  view.innerHTML='<div><button class="link" id="back">‹ Latihan</button></div><h2>'+(n===4?'Misi Bak Air':n===0?'Cek Kemampuan Awal':'Kuis Unit '+n)+'</h2>'+
+  (n===4?'<div class="card"><p>Kamu punya 3 nyawa. Setiap soal ada batas waktu. Tulis jawaban dengan angka saja. Siapkan kertas dan pensil untuk menghitung.</p></div>':'')+'<div id="q" class="stack"></div>';
+  $('#back').onclick=()=>go({tab:'latihan'});
+  const q=$('#q');
+  const start=()=>runQuiz(q,Object.assign(quizCfg(n),{onDone:res=>finishQuiz(n,res,q,{again:start,after:()=>{const b=document.createElement('button');b.className='btn';b.textContent='Kembali ke Latihan';b.onclick=()=>go({tab:'latihan'});q.appendChild(b)}})}));
+  start();
+}
+
+/* ---------- kegiatan interaktif ---------- */
+function sim1(x){
+  const P=4,L=3,T=4;let n=0;
+  function draw(f){
+    x.innerHTML='<div class="fig">'+drawBlock(P,L,n,{tFull:T,floor:true})+'</div>'+
+    '<div class="card"><p class="big">'+(n===0?'Dus masih kosong. Tekan Tambah lapis.':'<span class="num">'+n+' lapis × '+(P*L)+' kotak = '+(n*P*L)+' kotak</span>')+'</p>'+
+    '<p class="cap">Satu lapis berisi '+P+' × '+L+' = '+(P*L)+' kotak. Makin banyak kotak yang muat, makin besar ruang di dalam dus. Ukuran ruang inilah yang disebut volume.</p></div>'+
+    '<div class="row"><button class="btn ghost" id="mn"'+(n===0?' disabled':'')+'>Kurangi lapis</button><button class="btn" id="pl"'+(n===T?' disabled':'')+'>Tambah lapis</button></div>';
+    $('#mn',x).onclick=()=>{n--;draw('mn')};$('#pl',x).onclick=()=>{n++;draw('pl')};
+    if(f){const b=$('#'+f,x);if(b&&!b.disabled)b.focus()}
+  }
+  draw();
+}
+function sim2(x){
+  const v={p:4,l:3,t:2},names={p:'panjang (p)',l:'lebar (l)',t:'tinggi (t)'};
+  x.innerHTML='<div class="fig" id="fg"></div><div class="card" id="fo" aria-live="polite"></div><div class="card">'+
+    ['p','l','t'].map(k=>'<div class="step"><span>'+names[k]+'</span><button class="rb" data-k="'+k+'" data-d="-1" aria-label="Kurangi '+names[k]+'">−</button><output id="o'+k+'">'+v[k]+'</output><button class="rb" data-k="'+k+'" data-d="1" aria-label="Tambah '+names[k]+'">+</button></div>').join('')+
+    '<p class="cap">Setiap kotak kecil berukuran 1 cm × 1 cm × 1 cm. Ubah ukuran balok dan lihat volumenya.</p></div>';
+  function upd(){
+    const V=v.p*v.l*v.t;
+    $('#fg',x).innerHTML=drawBlock(v.p,v.l,v.t);
+    $('#fo',x).innerHTML='<p class="formula">V = p × l × t<br>V = '+v.p+' × '+v.l+' × '+v.t+' = '+fmt(V)+' cm³</p>'+
+      (v.p===v.l&&v.l===v.t?'<p>Panjang, lebar, dan tinggi sama, jadi ini sebuah kubus dengan rusuk '+v.p+' cm.</p>':'')+
+      (V%1000===0?'<p>'+fmt(V)+' cm³ = '+(V/1000)+' liter</p>':'');
+    ['p','l','t'].forEach(k=>{$('#o'+k,x).textContent=v[k];
+      x.querySelector('[data-k="'+k+'"][data-d="-1"]').disabled=v[k]<=1;
+      x.querySelector('[data-k="'+k+'"][data-d="1"]').disabled=v[k]>=6});
+  }
+  x.onclick=e=>{const b=e.target.closest('.rb');if(!b)return;const k=b.dataset.k;v[k]=Math.min(6,Math.max(1,v[k]+(+b.dataset.d)));upd()};
+  upd();
+}
+function detective(x){
+  let k=1;
+  const steps=[
+   {n:'Baca',t:'Baca soal dua kali. Bayangkan bentuk akuariumnya.'},
+   {n:'Tandai',t:'Beri warna kuning pada informasi penting dan warna biru pada pertanyaan.<br>Diketahui: p = 60 cm, l = 30 cm, t = 40 cm, air ¾ bagian.<br>Ditanya: banyak air dalam liter.'},
+   {n:'Rencanakan',t:'Langkah 1: hitung volume akuarium.<br>Langkah 2: ubah cm³ menjadi liter.<br>Langkah 3: hitung ¾ bagiannya.'},
+   {n:'Hitung dan Cek',t:'V = 60 × 30 × 40 = 72.000 cm³ = 72 liter.<br>¾ × 72 = 54 liter.<br>Cek: 54 lebih kecil dari 72, jadi masuk akal.<br><b>Jawaban: air di dalam akuarium sebanyak 54 liter.</b>'}
+  ];
+  function draw(){
+    const a=k>=2;
+    x.innerHTML='<div class="card"><p class="eyebrow">Kasus Akuarium Dika</p><p class="qtext">Akuarium Dika berbentuk balok '+
+      (a?'<span class="hl-info">berukuran panjang 60 cm, lebar 30 cm, dan tinggi 40 cm</span>':'berukuran panjang 60 cm, lebar 30 cm, dan tinggi 40 cm')+'. Akuarium diisi air '+
+      (a?'<span class="hl-info">¾ bagian</span>':'¾ bagian')+'. '+
+      (a?'<span class="hl-ask">Berapa liter air di dalam akuarium?</span>':'Berapa liter air di dalam akuarium?')+'</p></div>'+
+      '<div class="fig">'+tank(0,k>=4)+'</div>'+
+      steps.slice(0,k).map((s,i)=>'<div class="card pop"><b>'+(i+1)+'. '+s.n+'</b><p>'+s.t+'</p></div>').join('')+
+      (k<4?'<button class="btn" id="nx">Langkah berikutnya</button>':'');
+    if(k>=4){const tk=$('#tk',x);requestAnimationFrame(()=>requestAnimationFrame(()=>tk.style.setProperty('--lvl','.75')))}
+    const nx=$('#nx',x);if(nx)nx.onclick=()=>{k++;draw();const c=x.querySelectorAll('.pop');c[c.length-1].scrollIntoView({block:'center',behavior:'smooth'})};
+  }
+  draw();
+}
+function tandai(x){
+  const parts=[
+   {t:'Ibu membeli pia untuk oleh-oleh. Kardusnya berbentuk balok.',a:null},{t:'Panjangnya 50 cm,',a:'info'},{t:'lebarnya 30 cm,',a:'info'},{t:'dan tingginya 20 cm.',a:'info'},
+   {t:'Pia itu enak sekali.',a:null},{t:'Berapa cm³ volume kardus itu?',a:'ask'}];
+  let mode='info',mark=parts.map(()=>null),checked=false;
+  const tag={info:'Diketahui',ask:'Ditanya'};
+  function draw(){
+    const wrong=checked?parts.filter((p,i)=>mark[i]!==p.a).length:0;
+    x.innerHTML='<p class="eyebrow">Kasus Kardus Oleh-oleh</p>'+picHTML({kind:'solid',p:50,l:30,t:20,color:'k1',deco:'tape',lab:{p:'50 cm',l:'30 cm',t:'20 cm'},alt:'Kardus oleh-oleh berbentuk balok'})+'<p>Ketuk bagian soal untuk memberi tanda. Pilih dulu warnanya. Ketuk lagi untuk menghapus tanda.</p>'+
+    '<div class="row"><button class="mode" data-m="info" aria-pressed="'+(mode==='info')+'"><span class="sw" style="background:var(--info)"></span>Informasi penting (kuning)</button>'+
+    '<button class="mode" data-m="ask" aria-pressed="'+(mode==='ask')+'"><span class="sw" style="background:var(--ask)"></span>Pertanyaan (biru)</button></div>'+
+    '<div class="card"><div class="chunks">'+parts.map((p,i)=>'<button class="chunk'+(mark[i]?' m-'+mark[i]:'')+(checked&&mark[i]!==p.a?' bad':'')+'" data-i="'+i+'"'+(checked?' disabled':'')+'>'+(mark[i]?'<small>'+tag[mark[i]]+'</small>':'')+p.t+'</button>').join('')+'</div></div>'+
+    (checked?(wrong===0?'<div class="fb good"><b>Hebat!</b> Semua tandamu tepat. Kalimat tentang pia tidak perlu dihitung.</div>':'<div class="fb hint"><b>Hampir.</b> Periksa bagian yang berbingkai merah. Cari angka ukuran dan kalimat tanya.</div><button class="btn ghost" id="rt">Coba lagi</button>'):'<button class="btn" id="ck">Periksa</button>');
+    x.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{mode=b.dataset.m;draw()});
+    x.querySelectorAll('.chunk').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;mark[i]=mark[i]===mode?null:mode;draw()});
+    const ck=$('#ck',x);if(ck)ck.onclick=()=>{checked=true;draw()};
+    const rt=$('#rt',x);if(rt)rt.onclick=()=>{checked=false;mark=parts.map(()=>null);draw()};
+    if(checked)navBtns(x);
+  }
+  draw();
+}
+function matchGame(x){
+  const pairs=[['2 liter','2.000 cm³'],['1 m³','1.000 liter'],['5 dm³','5 liter'],['3.000 cm³','3 liter']];
+  const Lf=shuffle(pairs.map((p,i)=>({t:p[0],i:i}))),Rt=shuffle(pairs.map((p,i)=>({t:p[1],i:i})));
+  let sel=null,found={},miss=0,msg='';
+  function draw(){
+    const n=Object.keys(found).length,fin=n===pairs.length;
+    x.innerHTML='<p>Pasangkan ukuran yang nilainya sama. Ketuk satu kartu di kiri, lalu kartu pasangannya di kanan.</p>'+
+    '<div class="mgrid"><div class="opts">'+Lf.map(c=>'<button class="opt'+(found[c.i]?' ok':'')+(sel===c.i?' sel':'')+'" data-s="L" data-i="'+c.i+'"'+(found[c.i]?' disabled':'')+'>'+c.t+'</button>').join('')+'</div>'+
+    '<div class="opts">'+Rt.map(c=>'<button class="opt'+(found[c.i]?' ok':'')+'" data-s="R" data-i="'+c.i+'"'+(found[c.i]?' disabled':'')+'>'+c.t+'</button>').join('')+'</div></div>'+
+    '<div aria-live="polite">'+(fin?'<div class="fb good"><b>Semua pasangan ketemu!</b> Salah '+miss+' kali.</div>':(msg?'<div class="fb hint">'+msg+'</div>':''))+'</div>';
+    x.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.i;
+      if(b.dataset.s==='L'){sel=i;msg='';draw();return}
+      if(sel===null){msg='Pilih kartu di kiri dulu.';draw();return}
+      if(sel===i){found[i]=true;sel=null;msg=''}else{miss++;sel=null;msg='Belum cocok. Ingat: 1 liter = 1.000 cm³ = 1 dm³. Coba lagi.'}
+      draw();
+    });
+    if(fin)navBtns(x);
+  }
+  draw();
+}
+
+/* ---------- isi tiap langkah ---------- */
+const ST={
+ mulai(u,r){
+  const t={
+   0:'Sebelum mulai, kita cek dulu kemampuanmu. Tidak ada nilai jelek di sini. Jawab sebisamu, ya. Ada 5 soal, sekitar 5 menit.',
+   1:'Hari ini Baiq Rani membantu Ibu menata kotak kue ke dalam dus besar. Rani ingin tahu, berapa kotak yang muat di dalam dus itu. Apakah harus dihitung satu per satu?',
+   2:'Bak mandi di rumah kakek Rani berbentuk balok. Berapa liter air yang muat di dalamnya? Kita tidak perlu menghitung satu per satu, karena ada rumus yang cepat.',
+   3:'Lalu Dika punya akuarium untuk ikan cupangnya. Ia bingung, berapa liter air yang harus dituang. Ayo jadi detektif soal cerita dan bantu Dika memecahkan kasusnya!',
+   4:'Selamat datang, Penjaga Bak Air! Desa Rani membutuhkan bantuanmu supaya air selalu cukup. Selesaikan 5 misi sebelum waktu habis.'
+  }[u.id];
+  r.innerHTML=(u.id===1?'<div class="fig">'+drawBlock(4,3,2)+'</div>':u.id===2?'<div class="fig">'+drawBlock(5,3,2)+'</div>':u.id===3?picHTML({kind:'glass',p:60,l:30,t:40,water:.75,deco:'fish',lab:{p:'60 cm',l:'30 cm',t:'40 cm'},alt:'Akuarium berisi ikan'}):u.id===4?picHTML({kind:'glass',p:100,l:60,t:50,water:.5,bucket:'10 liter',alt:'Bak air dan ember'}):'')+
+   '<p class="qtext">'+t+'</p>'+
+   (GOALS[u.id]?'<div class="goal"><b>Tujuan belajar</b><br>'+GOALS[u.id]+'</div>':'')+
+   (u.id===4?'<div class="card"><b>Aturan misi</b><p>Kamu punya 3 nyawa. Jawaban salah atau waktu habis mengurangi nyawa. Tulis jawaban dengan angka saja. Siapkan kertas dan pensil untuk menghitung.</p></div>':'');
+  navBtns(r);
+ },
+ jelajahi(u,r){
+  const x=sub(r);({1:sim1,2:sim2,3:detective})[u.id](x);navBtns(r);
+ },
+ pahami(u,r){
+  if(u.id===1)r.innerHTML='<div class="card"><p class="formula">Volume = ukuran ruang yang bisa diisi</p></div><div class="fig">'+drawBlock(3,2,2)+'<p class="cap">Satu lapis: 3 × 2 = 6 kotak kecil. Ada 2 lapis. Volume = 6 × 2 = 12 kotak kecil. Kotak kecil yang sama besar ini disebut kubus satuan.</p></div>'+
+   '<div class="card"><b>Cara menghitung cepat</b><p>1. Hitung kotak pada satu lapis: panjang × lebar.</p><p>2. Kalikan dengan banyak lapis, yaitu tinggi.</p></div>';
+  else if(u.id===2)r.innerHTML='<div class="card"><b>Volume kubus</b><p class="formula">V = s × s × s</p><p class="cap">Contoh: rusuk 5 cm, V = 5 × 5 × 5 = 125 cm³</p></div>'+
+   '<div class="card"><b>Volume balok</b><p class="formula">V = p × l × t</p><p class="cap">Contoh: 8 cm × 5 cm × 2 cm, V = 80 cm³</p></div>'+
+   '<div class="card"><b>Mengubah satuan volume</b><div class="tbl"><div><span>1 liter</span><b>1.000 cm³ = 1 dm³</b></div><div><span>1 m³</span><b>1.000 liter</b></div><div><span>1 m³</span><b>1.000.000 cm³</b></div></div></div>';
+  else r.innerHTML=[['Baca','Baca soal dua kali. Bayangkan bendanya.'],['Tandai','Beri warna kuning pada angka penting dan biru pada pertanyaan.'],['Rencanakan','Tulis urutan langkah dan rumus yang dipakai.'],['Hitung dan Cek','Hitung, tulis satuan dan kalimat jawaban. Cek apakah jawabanmu masuk akal.']].map((s,i)=>'<div class="card"><b>'+(i+1)+'. '+s[0]+'</b><p>'+s[1]+'</p></div>').join('');
+  navBtns(r);
+ },
+ tandai(u,r){tandai(sub(r))},
+ coba(u,r){
+  const x=sub(r);
+  const start=()=>runQuiz(x,Object.assign(quizCfg(u.id),{onDone:res=>finishQuiz(u.id,res,x,{again:start,after:()=>navBtns(x)})}));
+  start();
+ },
+ tantang(u,r){
+  const x=sub(r);
+  if(u.id===2){matchGame(x);return}
+  runQuiz(x,{qs:[TANTANG[u.id]],label:'Tantangan',onDone:res=>{
+    x.innerHTML='<div class="card"><b>Tantangan selesai.</b><p>'+(res.pts>0?'Kamu berhasil menjawab tantangan ini.':'Tidak apa-apa. Kamu bisa mencobanya lagi nanti.')+'</p></div>';
+    navBtns(x);
+  }});
+ },
+ refleksi(u,r){
+  const ops=['Sudah paham','Mulai paham','Belum paham'];
+  r.innerHTML='<p class="qtext">Apa yang sudah kamu pahami?</p><div class="opts" id="rf">'+ops.map((o,i)=>'<button class="opt'+(S.refl[u.id]===i?' sel':'')+'" data-i="'+i+'" aria-pressed="'+(S.refl[u.id]===i)+'">'+o+'</button>').join('')+'</div>'+
+   (u.id===3?'<div class="card"><label for="note">Teman Diskusi: tulis satu kalimat tentang alasan jawabanmu.</label><textarea id="note" rows="3" maxlength="200">'+esc(S.notes[3]||'')+'</textarea></div><div class="card"><b>Tugas di rumah</b><p>Buat satu soal cerita volume dari benda di rumahmu, misalnya kotak sepatu. Bawa ke kelas untuk dibahas bersama teman.</p></div>':'')+
+   (u.id===4&&S.scores[4]!=null?followUp(S.scores[4]):'');
+  $('#rf',r).onclick=e=>{const b=e.target.closest('.opt');if(!b)return;S.refl[u.id]=+b.dataset.i;save();r.querySelectorAll('#rf .opt').forEach(o=>{const on=+o.dataset.i===S.refl[u.id];o.classList.toggle('sel',on);o.setAttribute('aria-pressed',on)})};
+  const nt=$('#note',r);if(nt)nt.oninput=()=>{S.notes[3]=nt.value;save()};
+  navBtns(r);
+ }
+};
+
+render();
+})();
+</script>
+</body>
+</html>
